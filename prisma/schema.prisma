@@ -6,10 +6,14 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "mysql"
     url      = env("DATABASE_URL")
+    shadowDatabaseUrl = env("DATABASE_SHADOW")
 }
 
-model Example {
+model Vote {
     id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    votedFor Int
+    votedAgainst Int
 }
