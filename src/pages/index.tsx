@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import { FC, useState } from "react";
 import { getOptionsForVote } from "../utils/getRandomPokemons";
 import { inferQueryInput, inferQueryOutput, trpc } from "../utils/trpc";
@@ -64,7 +65,7 @@ const PokemonListing: FC<{ pokemon: PokemonFromServer; vote: () => void }> = (
 ) => {
   return (
     <div className="flex flex-col items-center">
-      <img src={props.pokemon.sprites.front_default} className="w-64 h-64" />
+      <Image src={`${props.pokemon.sprites.front_default}`} width={256} height={256} alt=""/>
       <div className="text-center text-xl capitalize mt-[-2rem]">
         {props.pokemon.name}
       </div>
