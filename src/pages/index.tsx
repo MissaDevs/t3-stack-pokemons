@@ -20,7 +20,7 @@ const Home: NextPage = () => {
 
   const voteMutation = trpc.useMutation(['pokemon.cast-vote'])
 
-  const sendVoteRoundest = (selected: number) => {
+  const sendVoteRoundest = (selected: any) => {
     if (selected === first) {
       voteMutation.mutate({ votedFor: first, votedAgainst: second })
     } else {
