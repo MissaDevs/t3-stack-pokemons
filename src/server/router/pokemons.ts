@@ -3,17 +3,18 @@ import { z } from "zod";
 
 import { PokemonClient } from "pokenode-ts";
 
-import { prisma } from '../db/client'
+import { prisma } from "../db/client";
 
 export const pokeRouter = createRouter()
   .query("getPokemonById", {
     input: z.object({ id: z.number().default(0) }),
     async resolve({ input }) {
-      const api = new PokemonClient();
+      const pokemon = await prisma.pokemon.findFirst({
+        where: { id: input.id },
+      });
 
-      const pokemon = await api.getPokemonById(input.id);
-
-      return { name: pokemon.name, sprites: pokemon.sprites };
+      if (!pokemon) throw new Error("Pokemon not found");
+      return pokemon;
     },
   })
   .mutation("cast-vote", {
@@ -22,13 +23,13 @@ export const pokeRouter = createRouter()
       votedAgainst: z.number().default(0),
     }),
     async resolve({ input }) {
-
       const voteInDb = await prisma.vote.create({
         data: {
-          ...input
-        }
-      })
-      
+          votedAgainstId: input.votedAgainst,
+          votedForId: input.votedFor,
+        },
+      });
+
       return { succes: true, vote: voteInDb };
     },
   });

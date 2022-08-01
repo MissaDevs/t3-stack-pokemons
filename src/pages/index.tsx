@@ -1,9 +1,8 @@
 import type { NextPage } from "next";
-import Head from "next/head";
 import Image from "next/image";
 import { FC, useState } from "react";
 import { getOptionsForVote } from "../utils/getRandomPokemons";
-import { inferQueryInput, inferQueryOutput, trpc } from "../utils/trpc";
+import { inferQueryOutput, trpc } from "../utils/trpc";
 
 const btn =
   "inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline focus:border-blue-300 focus:ring-blue-300 focus:ring-opacity-50";
@@ -65,7 +64,7 @@ const PokemonListing: FC<{ pokemon: PokemonFromServer; vote: () => void }> = (
 ) => {
   return (
     <div className="flex flex-col items-center">
-      <Image src={`${props.pokemon.sprites.front_default}`} width={256} height={256} alt=""/>
+      <Image src={`${props.pokemon.spriteUrl}`} width={256} height={256} alt=""/>
       <div className="text-center text-xl capitalize mt-[-2rem]">
         {props.pokemon.name}
       </div>
