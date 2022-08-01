@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { FC, useState } from "react";
 import { getOptionsForVote } from "../utils/getRandomPokemons";
 import { inferQueryOutput, trpc } from "../utils/trpc";
@@ -18,40 +19,48 @@ const Home: NextPage = () => {
     { id: second },
   ]);
 
-  const voteMutation = trpc.useMutation(['pokemon.cast-vote'])
+  const voteMutation = trpc.useMutation(["pokemon.cast-vote"]);
 
   const sendVoteRoundest = (selected: any) => {
     if (selected === first) {
-      voteMutation.mutate({ votedFor: first, votedAgainst: second })
+      voteMutation.mutate({ votedFor: first, votedAgainst: second });
     } else {
-      voteMutation.mutate({ votedFor: second, votedAgainst: first })
+      voteMutation.mutate({ votedFor: second, votedAgainst: first });
     }
 
     updateIds(getOptionsForVote());
   };
 
+  const dataLoaded =
+    !firstPokemon.isLoading &&
+    firstPokemon.data &&
+    !secondPokemon.isLoading &&
+    secondPokemon.data;
+
   return (
-    <div className="h-screen w-screen flex flex-col justify-center items-center">
+    <div className="h-screen w-screen flex flex-col justify-between items-center">
       <div className="text-2xl text-center">Which pokemon is Rounder?</div>
-      <div className="p-2" />
-      <div className="border rounded p-8 flex justify-between items-center max-w-2xl">
-        {!firstPokemon.isLoading &&
-          firstPokemon.data &&
-          !secondPokemon.isLoading &&
-          secondPokemon.data && (
-            <>
-              <PokemonListing
-                pokemon={firstPokemon.data}
-                vote={() => sendVoteRoundest(first)}
-              />
-              <div className="p-8">VS</div>
-              <PokemonListing
-                pokemon={secondPokemon.data}
-                vote={() => sendVoteRoundest(second)}
-              />
-            </>
-          )}
-        <div className="p-2" />
+      {dataLoaded && (
+        <div className="border rounded p-8 flex justify-between items-center max-w-2xl">
+          <PokemonListing
+            pokemon={firstPokemon.data}
+            vote={() => sendVoteRoundest(first)}
+          />
+          <div className="p-8">VS</div>
+          <PokemonListing
+            pokemon={secondPokemon.data}
+            vote={() => sendVoteRoundest(second)}
+          />
+          <div className="p-2" />
+        </div>
+      )}
+
+      {!dataLoaded && <img src="/loading.svg" className="w-48"/>}
+
+      <div className="w-full text-xl text-center pb-2">
+        <Link href="/results">
+          <a>Results</a>
+        </Link>
       </div>
     </div>
   );
@@ -64,7 +73,12 @@ const PokemonListing: FC<{ pokemon: PokemonFromServer; vote: () => void }> = (
 ) => {
   return (
     <div className="flex flex-col items-center">
-      <Image src={`${props.pokemon.spriteUrl}`} width={256} height={256} alt=""/>
+      <Image
+        src={`${props.pokemon.spriteUrl}`}
+        width={256}
+        height={256}
+        alt=""
+      />
       <div className="text-center text-xl capitalize mt-[-2rem]">
         {props.pokemon.name}
       </div>
